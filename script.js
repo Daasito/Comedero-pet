@@ -21,7 +21,7 @@ const connectionStatusText = document.querySelector('#connectionStatusText');
 const celebrationEyebrow = document.querySelector('#celebrationEyebrow');
 const celebrationTitle = document.querySelector('#celebrationTitle');
 
-const API_BASE_URL = 'http://192.168.1.77:8000/api/v1';
+const API_BASE_URL = 'https://comedero-pet-api.onrender.com/api/v1';
 const DEVICE_ID = 'esp32-001';
 
 let commandPollingTimer;
