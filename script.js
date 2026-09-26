@@ -26,9 +26,10 @@ const DEVICE_ID = 'esp32-001';
 
 let commandPollingTimer;
 let pollingAttempts = 0;
-const MAX_POLLING_ATTEMPTS = 20; // Cancela tras ~60 segundos
+const MAX_POLLING_ATTEMPTS = 20;
 let currentDuration = Number(portionRange.value);
-let isServing = false; // Estado de control para bloquear la salida del modal
+let isServing = false;
+let isDeviceOnline = false; // Variable global para rastrear el estado de conexión
 
 // --- 1. LÓGICA DE CONTROL DE ACCESO (LOGIN) ---
 function checkAuth() {
@@ -74,34 +75,40 @@ function updatePortion() {
 
 // --- 3. LÓGICA DEL MODAL Y BLOQUEO AL SERVIR ---
 function openCelebration() {
-  isServing = true; // Bloqueamos el estado para evitar cierres involuntarios
+  isServing = true;
   servedAmount.textContent = currentDuration;
   celebration.classList.add('is-visible');
   celebration.setAttribute('aria-hidden', 'false');
   
-  // Ocultar botones de cierre mientras el proceso está activo
   closeCelebration.style.display = 'none';
   doneButton.style.display = 'none';
 }
 
 function unlockCelebrationModal() {
-  isServing = false; // Desbloqueamos el modal
+  isServing = false;
   closeCelebration.style.display = 'block';
   doneButton.style.display = 'inline-block';
   closeCelebration.focus();
 }
 
 function closeCelebrationModal() {
-  if (isServing) return; // Si aún está sirviendo, no permite cerrar
+  if (isServing) return;
 
   window.clearTimeout(commandPollingTimer);
   celebration.classList.remove('is-visible');
   celebration.setAttribute('aria-hidden', 'true');
   
-  // Reactivamos el botón al cerrar el modal
-  serveButton.disabled = false;
+  // Reactivar botón solo si el dispositivo está en línea
   serveButton.innerHTML = '<span class="button-icon" aria-hidden="true">✦</span> SERVIR COMIDA';
-  serveButton.focus();
+  
+  if (isDeviceOnline) {
+    serveButton.disabled = false;
+    servingNote.textContent = 'Listo para servir.';
+    serveButton.focus();
+  } else {
+    serveButton.disabled = true;
+    servingNote.textContent = 'Comedero desconectado. Revisa la conexión.';
+  }
 }
 
 // --- 4. COMUNICACIÓN CON LA API FASTAPI ---
@@ -121,14 +128,29 @@ async function sendServeCommandToESP32(durationSeconds) {
 
 function setConnectionStatus(state) {
   connectionStatus.classList.remove('is-online', 'is-offline');
+  
   if (state === 'online' || state === 'busy') {
+    isDeviceOnline = true;
     connectionStatus.classList.add('is-online');
     connectionStatusText.textContent = 'CONECTADO';
     connectionStatus.setAttribute('aria-label', 'Comedero conectado');
+    
+    // Si no se está ejecutando un proceso activo, habilitar el botón
+    if (!isServing) {
+      serveButton.disabled = false;
+      servingNote.textContent = 'Listo para servir.';
+    }
   } else {
+    isDeviceOnline = false;
     connectionStatus.classList.add('is-offline');
     connectionStatusText.textContent = 'DESCONECTADO';
     connectionStatus.setAttribute('aria-label', 'Comedero desconectado');
+    
+    // Deshabilitar el botón inmediatamente si está fuera de línea
+    if (!isServing) {
+      serveButton.disabled = true;
+      servingNote.textContent = 'Comedero desconectado. Revisa la conexión.';
+    }
   }
 }
 
@@ -148,7 +170,7 @@ async function checkCommandStatus(commandId) {
     celebrationEyebrow.textContent = 'TIEMPO AGOTADO';
     celebrationTitle.textContent = 'Sin respuesta del comedero';
     servingNote.textContent = 'El comedero tardó demasiado en responder.';
-    unlockCelebrationModal(); // Permitir cerrar ante timeout
+    unlockCelebrationModal();
     return;
   }
 
@@ -165,7 +187,7 @@ async function checkCommandStatus(commandId) {
       servedAmount.textContent = command.duration_seconds;
       servingNote.textContent = `¡Listo! El motor giró ${command.duration_seconds} segundos.`;
       setConnectionStatus('online');
-      unlockCelebrationModal(); // Habilitar la salida del popup al terminar
+      unlockCelebrationModal();
       return;
     }
     
@@ -173,7 +195,7 @@ async function checkCommandStatus(commandId) {
       celebrationEyebrow.textContent = 'UPS…';
       celebrationTitle.textContent = 'No se pudo servir';
       servingNote.textContent = 'El comedero reportó un problema.';
-      unlockCelebrationModal(); // Habilitar la salida ante error
+      unlockCelebrationModal();
       return;
     }
     
@@ -184,6 +206,11 @@ async function checkCommandStatus(commandId) {
 }
 
 async function serveFood() {
+  if (!isDeviceOnline) {
+    servingNote.textContent = 'El comedero está desconectado.';
+    return;
+  }
+
   serveButton.disabled = true;
   serveButton.innerHTML = '<span class="button-icon" aria-hidden="true">…</span> SIRVIENDO...';
   servingNote.textContent = `Preparando el motor durante ${currentDuration} segundos...`;
@@ -212,14 +239,12 @@ serveButton.addEventListener('click', serveFood);
 closeCelebration.addEventListener('click', closeCelebrationModal);
 doneButton.addEventListener('click', closeCelebrationModal);
 
-// Bloqueo de cierre al hacer clic en el fondo oscuro
 celebration.addEventListener('click', (event) => {
   if (!isServing && event.target === celebration) {
     closeCelebrationModal();
   }
 });
 
-// Bloqueo de cierre con la tecla ESC
 document.addEventListener('keydown', (event) => {
   if (!isServing && event.key === 'Escape' && celebration.classList.contains('is-visible')) {
     closeCelebrationModal();
