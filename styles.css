@@ -330,6 +330,67 @@ input[type="range"]::-moz-range-thumb {
   color: var(--green);
   animation-delay: 0.45s;
 }
+
+/* Estilos para el Login */
+.login-screen {
+  position: fixed;
+  inset: 0;
+  background-color: #f9d98c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+}
+
+.login-card {
+  background: #ffffff;
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0px #000;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-card input[type="password"] {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #000;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 1rem;
+  margin: 1rem 0;
+  box-sizing: border-box;
+}
+
+.error-note {
+  color: #d93838;
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-top: 0.8rem;
+}
+
+/* Control de visibilidad del Popup Celebration */
+.celebration {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+}
+
+.celebration.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .tiny-button {
   padding: 13px 18px;
   border: var(--line);

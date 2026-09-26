@@ -11,7 +11,24 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="app-shell">
+
+    <!-- PANTALLA DE LOGIN -->
+    <div class="login-screen" id="loginScreen">
+      <div class="login-card">
+        <p class="eyebrow">ACCESO RESTRINGIDO</p>
+        <h2>Comedero Pet</h2>
+        <p class="login-sub">Ingresa la contraseña para controlar el comedero.</p>
+        
+        <form id="loginForm">
+          <input type="password" id="passwordInput" placeholder="Contraseña" required autocomplete="current-password" />
+          <button class="serve-button" type="submit">ENTRAR</button>
+        </form>
+        <p class="error-note" id="loginError" style="display: none;">Contraseña incorrecta. Inténtalo de nuevo.</p>
+      </div>
+    </div>
+
+    <!-- APLICACIÓN PRINCIPAL (Oculta hasta iniciar sesión) -->
+    <main class="app-shell" id="appShell" style="display: none;">
       <header class="topbar">
         <a class="brand" href="#inicio" aria-label="Inicio de Comedero Pet">COMEDERO<br />PET</a>
         <div class="connection-status" id="connectionStatus" role="status" aria-live="polite" aria-label="Comprobando conexión del comedero">
@@ -36,8 +53,8 @@
       <section class="control-card" aria-labelledby="portion-title">
         <div class="card-heading">
           <div>
-          <p class="eyebrow">TIEMPO DE GIRO</p>
-          <h2 id="portion-title"><output id="portionValue">30</output> <small>s</small></h2>
+            <p class="eyebrow">TIEMPO DE GIRO</p>
+            <h2 id="portion-title"><output id="portionValue">30</output> <small>s</small></h2>
           </div>
         </div>
 
@@ -45,8 +62,8 @@
           Ajusta el tiempo
           <span id="portionHint">Tiempo estándar</span>
         </label>
-        <input id="portionRange" type="range" min="0" max="60" value="30" step="1" aria-describedby="portionHint" />
-        <div class="range-scale" aria-hidden="true"><span>0 s</span><span>60 s</span></div>
+        <input id="portionRange" type="range" min="1" max="60" value="30" step="1" aria-describedby="portionHint" />
+        <div class="range-scale" aria-hidden="true"><span>1 s</span><span>60 s</span></div>
 
         <button class="serve-button" id="serveButton" type="button">
           <span class="button-icon" aria-hidden="true">✦</span>
@@ -56,14 +73,15 @@
       </section>
     </main>
 
+    <!-- POPUP / MODAL DE CELEBRACIÓN Y SERVIDO -->
     <div class="celebration" id="celebration" aria-hidden="true">
       <div class="celebration-card" role="status" aria-live="polite">
         <button class="close-celebration" id="closeCelebration" type="button" aria-label="Cerrar aviso">×</button>
         <div class="confetti" aria-hidden="true"><span>✦</span><span>●</span><span>✦</span></div>
-        <img src="assets/perrito-comedero.png" alt="Perrito feliz esperando su comida" />
-        <p class="eyebrow" id="celebrationEyebrow">¡ÑAM, ÑAM!</p>
-        <h2 id="celebrationTitle">¡Porción servida!</h2>
-        <p id="celebrationText">El motor giró durante <span id="servedAmount">30</span> segundos.</p>
+        <img src="assets/perrito-comedero.png" alt="Perrito esperando su comida" />
+        <p class="eyebrow" id="celebrationEyebrow">SIRVIENDO...</p>
+        <h2 id="celebrationTitle">Serviendo porción</h2>
+        <p id="celebrationText">El motor está girando. Tiempo restante: <b id="servedAmount">30</b>s</p>
         <button class="tiny-button" id="doneButton" type="button">¡GENIAL!</button>
       </div>
     </div>
