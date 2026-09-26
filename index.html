@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f9d98c" />
+    <title>Comedero Pet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#inicio" aria-label="Inicio de Comedero Pet">COMEDERO<br />PET</a>
+        <div class="connection-status" id="connectionStatus" role="status" aria-live="polite" aria-label="Comprobando conexión del comedero">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="connectionStatusText">COMPROBANDO...</span>
+        </div>
+      </header>
+
+      <section class="hero" id="inicio" aria-labelledby="welcome-title">
+        <div class="hero-copy">
+          <p class="eyebrow">HOLA, AMIGO</p>
+          <h1 id="welcome-title">¡Bienvenido de vuelta!</h1>
+          <p class="intro">Tu mascota está a un toque de recibir su comida.</p>
+        </div>
+        <div class="pet-frame" aria-hidden="true">
+          <span class="spark spark-one">✦</span>
+          <span class="spark spark-two">✦</span>
+          <img src="assets/perrito-comedero.png" alt="" />
+        </div>
+      </section>
+
+      <section class="control-card" aria-labelledby="portion-title">
+        <div class="card-heading">
+          <div>
+          <p class="eyebrow">TIEMPO DE GIRO</p>
+          <h2 id="portion-title"><output id="portionValue">30</output> <small>s</small></h2>
+          </div>
+        </div>
+
+        <label class="range-label" for="portionRange">
+          Ajusta el tiempo
+          <span id="portionHint">Tiempo estándar</span>
+        </label>
+        <input id="portionRange" type="range" min="0" max="60" value="30" step="1" aria-describedby="portionHint" />
+        <div class="range-scale" aria-hidden="true"><span>0 s</span><span>60 s</span></div>
+
+        <button class="serve-button" id="serveButton" type="button">
+          <span class="button-icon" aria-hidden="true">✦</span>
+          SERVIR COMIDA
+        </button>
+        <p class="serving-note" id="servingNote" aria-live="polite">Listo para servir.</p>
+      </section>
+    </main>
+
+    <div class="celebration" id="celebration" aria-hidden="true">
+      <div class="celebration-card" role="status" aria-live="polite">
+        <button class="close-celebration" id="closeCelebration" type="button" aria-label="Cerrar aviso">×</button>
+        <div class="confetti" aria-hidden="true"><span>✦</span><span>●</span><span>✦</span></div>
+        <img src="assets/perrito-comedero.png" alt="Perrito feliz esperando su comida" />
+        <p class="eyebrow" id="celebrationEyebrow">¡ÑAM, ÑAM!</p>
+        <h2 id="celebrationTitle">¡Porción servida!</h2>
+        <p id="celebrationText">El motor giró durante <span id="servedAmount">30</span> segundos.</p>
+        <button class="tiny-button" id="doneButton" type="button">¡GENIAL!</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
